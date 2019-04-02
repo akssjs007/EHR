@@ -99,6 +99,7 @@ abstract participant Citizen identified by id {
 participant Doctor extends Citizen {
   o String doctorId
   o Hospitals hospital
+  o Double consultanceFee
 }
 participant Chemist extends Citizen {
   o String shopId
