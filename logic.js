@@ -16,7 +16,7 @@
 
 /**
  * Transaction for recording appointment between doctor and patient.
- * @param {org.ehr.basic} atx The sample transaction instance.
+ * @param {org.ehr.basic.Appointment} atx The sample transaction instance.
  * @transaction
  */
 async function appointment(atx) {
