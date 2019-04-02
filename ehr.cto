@@ -37,12 +37,42 @@ enum Medicines {
   o FLUOXETINE
   o ALPRAZOLAM
 }
+enum Tests {
+  o LFT
+  o URINALYSIS
+  o INR
+  o BLOODTEST
+}
+
+transaction Appointment {
+  o Prescription pPaper
+  o Patient visitor
+  o Doctor host
+}
+
+transaction Drugstore {
+  o Patient visitor
+  o Chemist retailer
+}
+
+transaction Inventory {
+  o Medicine medicine
+  o Chemist retailer
+}
+
+transaction Reimbursement {
+  o Claim cPaper
+  o InsuranceCompany host
+  o Patient visitor
+}
+
 
 asset Medicine identified by medicineId {
   o String medicineId
   o String medicineName
   o Medicines medicineType
   o Double quantity
+  o Double cost
   o String expiryDate
 }
 asset Prescription identified by prescriptionId {
@@ -76,6 +106,8 @@ participant Chemist extends Citizen {
 }
 participant PathLab extends Citizen {
   o String labName
+  o Tests test
+  o Double cost
 }
 participant InsuranceCompany extends Citizen {
   o String companyName
@@ -83,4 +115,5 @@ participant InsuranceCompany extends Citizen {
 participant Patient extends Citizen {
   --> Prescription [] prescriptions
   --> Claim [] claims
+  o Double debt 
 }
