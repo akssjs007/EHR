@@ -49,23 +49,23 @@ transaction Appointment {
   o Patient visitor
   o Doctor host
 }
-
 transaction Drugstore {
   o Patient visitor
   o Chemist retailer
 }
-
 transaction Inventory {
   o Medicine medicine
   o Chemist retailer
 }
-
 transaction Reimbursement {
   o Claim cPaper
   o InsuranceCompany host
   o Patient visitor
 }
-
+transaction Test {
+  o Patient visitor
+  o PathLab host
+}
 
 asset Medicine identified by medicineId {
   o String medicineId
@@ -108,7 +108,7 @@ participant Chemist extends Citizen {
 participant PathLab extends Citizen {
   o String labName
   o Tests test
-  o Double cost
+  o Double [] cost
 }
 participant InsuranceCompany extends Citizen {
   o String companyName
