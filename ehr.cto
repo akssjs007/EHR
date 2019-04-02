@@ -45,26 +45,26 @@ enum Tests {
 }
 
 transaction Appointment {
-  o Prescription pPaper
-  o Patient visitor
-  o Doctor host
+  --> Prescription pPaper
+  --> Patient visitor
+  --> Doctor host
 }
 transaction Drugstore {
-  o Patient visitor
-  o Chemist retailer
+  --> Patient visitor
+  --> Chemist retailer
 }
 transaction Inventory {
-  o Medicine medicine
-  o Chemist retailer
+  --> Medicine medicine
+  --> Chemist retailer
 }
 transaction Reimbursement {
-  o Claim cPaper
-  o InsuranceCompany host
-  o Patient visitor
+  --> Claim cPaper
+  --> InsuranceCompany host
+  --> Patient visitor
 }
 transaction Test {
-  o Patient visitor
-  o PathLab host
+  --> Patient visitor
+  --> PathLab host
 }
 
 asset Medicine identified by medicineId {
@@ -91,10 +91,10 @@ asset Claim identified by claimId {
 }
 
 abstract participant Citizen identified by id {
-	o String id
-    o String firstName
-    o String lastName
-    o Address address optional
+  o String id
+  o String firstName
+  o String lastName
+  o Address address optional
 }
 participant Doctor extends Citizen {
   o String doctorId
