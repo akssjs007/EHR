@@ -103,7 +103,7 @@ participant Doctor extends Citizen {
 }
 participant Chemist extends Citizen {
   o String shopId
-  --> Medicine [] listOfMedicine
+  o Medicine [] listOfMedicine
 }
 participant PathLab extends Citizen {
   o String labName
@@ -114,7 +114,7 @@ participant InsuranceCompany extends Citizen {
   o String companyName
 }
 participant Patient extends Citizen {
-  --> Prescription [] prescriptions
+  o Prescription [] prescriptions
   --> Claim [] claims
   o Double debt 
 }
