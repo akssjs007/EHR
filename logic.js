@@ -30,3 +30,46 @@ async function appointment(atx) {
     // Update the asset in the participant registry.
     await presRegistry.update(atx.visitor);
 }
+
+/**
+ * Transaction for recording whether patient took medicine from drugstore.
+ * @param {org.ehr.basic.Drugstore} dtx The sample transaction instance.
+ * @transaction
+ */
+async function drugstore(dtx) {
+
+  while(!dtx.visitor.prescriptions) {
+    if (dtx.visitor.prescriptions.medicinesBought == FALSE) {
+      if (dtx.visitor.prescriptions.prescribed == 'ASETAMINOPHIN') {
+        if (dtx.retailer.listOfMedicine[1].quantity > 0) {
+          dtx.visitor.debt = dtx.visitor.debt - dtx.retailer.listOfMedicine[1].cost
+        }
+      }
+      if (dtx.visitor.prescriptions.prescribed == 'ASPIRIN') {
+        if (dtx.retailer.listOfMedicine[2].quantity > 0) {
+          dtx.visitor.debt = dtx.visitor.debt - dtx.retailer.listOfMedicine[2].cost
+        }
+      }
+      if (dtx.visitor.prescriptions.prescribed == 'PARACETAMOL') {
+        if (dtx.retailer.listOfMedicine[3].quantity > 0) {
+          dtx.visitor.debt = dtx.visitor.debt - dtx.retailer.listOfMedicine[3].cost
+        }
+      }
+      if (dtx.visitor.prescriptions.prescribed == 'AMLODIPINE') {
+        if (dtx.retailer.listOfMedicine[4].quantity > 0) {
+          dtx.visitor.debt = dtx.visitor.debt - dtx.retailer.listOfMedicine[4].cost
+        }
+      }
+      if (dtx.visitor.prescriptions.prescribed == 'FLUOXETIN') {
+        if (dtx.retailer.listOfMedicine[5].quantity > 0) {
+          dtx.visitor.debt = dtx.visitor.debt - dtx.retailer.listOfMedicine[5].cost
+        }
+      }
+      if (dtx.visitor.prescriptions.prescribed == 'ALPRAZOLAM') {
+        if (dtx.retailer.listOfMedicine[6].quantity > 0) {
+          dtx.visitor.debt = dtx.visitor.debt - dtx.retailer.listOfMedicine[6].cost
+        }
+      }
+    }
+  }
+}
