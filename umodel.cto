@@ -30,10 +30,10 @@ enum InsuranceProviders{
 // Name of hospitals used for this project
 enum Hospitals {
   o AASTHA
-  // o REGENCY
-  // o NOVA
-  // o KABEER
-  // o CONTACARE_EYE
+  o REGENCY
+  o NOVA
+  o KABEER
+  o CONTACARE_EYE
 }
 // List of medicines in circulationn city-wide 
 enum Medicine {
@@ -51,12 +51,6 @@ enum Tests {
   o INR
   o BLOODTEST
 }
-// Status of appointment
-enum AppointStatus{
-  o CONFIRMED
-  o REJECTED
-  o PENDING
-}
 // Disease-infected part of human body
 enum DiseaseCategory{
   o EYE
@@ -67,39 +61,11 @@ enum DiseaseCategory{
   o MISC
 }
 
-// transaction Appointment {
-//   --> Prescription pPaper
-//   --> Patient visitor
-//   --> Doctor host
-// }
-// transaction Drugstore {
-//   --> Patient visitor
-//   --> Chemist retailer
-// }
-// transaction Inventory {
-//   --> Medicine medicine
-//   --> Chemist retailer
-// }
-// transaction Reimbursement {
-//   --> Claim cPaper
-//   --> InsuranceCompany host
-//   --> Patient visitor
-// }
-// transaction Test {
-//   --> Patient visitor
-//   --> PathLab host
-// }
-
-// transaction requestAppoint {
-//   --> Patient patient
-//   --> Doctor doctor
-//   o Appointment appoint
-// }
 // Transaction to get appointment
 transaction confirmAppoint {
   --> Patient patient
   --> Doctor doctor
-  --> Appointment appoint
+  o Appointment appoint
 }
 // Transaction for recording interaction between doctor and patient during appointment
 transaction consult {
@@ -107,107 +73,94 @@ transaction consult {
   --> Doctor doctor
   --> Appointment appoint
   o Prescription presc
+  o MedPresc medicine
 }
 // Transaction to record purchase of medicines by patient from drugstore
 transaction buyMed {
   --> Patient patient
   --> Chemist chemist
-  o Prescription presc
+  o Receipt chm_receipt
 }
 // Transaction to record test conducted by pathology lab on patient
 transaction buyTest {
   --> Patient patient
   --> PathLab pathlab
-  o Prescription presc
+  o Receipt pth_receipt
 }
 
 // Medical instructions is considered as an asset of this business logic
 asset MedPresc identified by medPrescId {
-  o String medPrescId
-  o Medicine medicineType
-  o Double mgs
-  o String instruction
-  o Double perDay
+  o String medPrescId						// Medicine prescription ID
+  o Medicine medicineType					// Type of medicine
+  o Long mgs								// strength of medicine
+  o String instruction						// Intake instructions
+  o Long perDay								// Number of tablets/ tbsp/ tsp medicine has to be taken
 }
 // Appointment is considered as an asset for this business logic
 asset Appointment identified by appointmentId{
-  o String appointmentId
-  o AppointStatus status
-  o Boolean isInsured
-  o String description
-  o DiseaseCategory group
-  o Doctor assigned optional
-  o Patient patient
-  o Insurance insuranceId optional
-  o Double consultanceFee
+  o String appointmentId						// Appointment ID
+  o String status								// Status of appointment
+  o Boolean isInsured							// Whether patient is insured
+  o String description							// Description of appointment
+  o DiseaseCategory group						// Disease area reported by patient
+  --> Doctor assigned optional					// Annoted doctor
+  --> Patient patient							// Patient details
+  --> Insurance insuranceId optional			// Insurance company
+  o Double consultanceFee						// Consultance Fee
 }
 // Insurance claim is considered as an asset for this business logic
 asset Insurance identified by InsuranceId {
-  o String InsuranceId
-  o InsuranceProviders provider
-  o Patient patient
-  o Double ensuredAmount
+  o String InsuranceId							// Insurance personnel ID
+  o InsuranceProviders provider					// Personnel's company
+  --> Patient patient							// Record of patient
+  o Double ensuredAmount						// Amount of insurance
 }
-// Drugstore receipt is considered as an asset for this business logic
+// Receipt is considered as an asset for this business logic
 asset Receipt identified by receiptID {
-  o String receiptID
-  o String providerID
-  o String providedTo
-  o Double amountPaid
-  o Boolean paidViaInsurance
+  o String receiptID						// Receipt ID
+  o String providerID						// Receipt provider ID
+  o String providedTo						// Receipt provided to ID
+  o Double amountPaid						// Amount paid against service and/or goods
 }
-// Medical Prescription is considered as an asset of this business logic
+// Prescription is considered as an asset of this business logic
 asset Prescription identified by prescriptionId {
-  o String prescriptionId
-  o Boolean isMedPrescribed
-  o MedPresc[] prescribed optional
-  o Boolean isTestPrescribed
-  o Tests[] tests optional
-  o Appointment appoint
-  // o Boolean[] testDone optional
-  o String[] test_report optional
-  o Boolean[] medicinesBought
-  o Receipt[] receipt
-  --> Doctor doctor
-  --> Patient visitor
+  o String prescriptionId							// Prescription ID
+  o Boolean isMedPrescribed							// Whether medicine was prescribed to patient
+  o MedPresc[] prescribed optional					// List of medicines prescribed
+  o Boolean isTestPrescribed						// Whether medical tests were prescribed to patient
+  o Tests[] tests optional							// List of all tests conducted on patient
+  --> Appointment appoint							// Appointment associated with this prescription 
+  o String[] test_report optional					// List of tests reports given by pathology lab
+  o Receipt[] receipt								// List of all receipts during treatment phase
+  --> Doctor doctor									// Doctor who is giving prescription
+  --> Patient visitor								// Patient who is getting prescribed
 }
-// asset Claim identified by claimId {
-//   o String claimId
-//   o Double cover
-//   --> InsuranceCompany manager
-//   o Boolean payment
-// }
 
 // An abstract citizen which shows that everyone of this project will have 
 // these factors alongwith add-ons
 abstract participant Citizen identified by id {
-  o String id
-  o String firstName
-  o String lastName
-  // o Address address optional
+  o String id									// Universal ID of citizen
+  o String firstName							// First Name of citizen
+  o String lastName								// Last Name of citizen
 }
 // Doctor is considered as a participant for this business logic
 participant Doctor extends Citizen {
-  o String doctorId
-  o Hospitals hospital
-  o Double consultanceFee
-  // o Integer n_patient
-  // o Integer max_patient
-  o DiseaseCategory speciality
+  o Hospitals hospital							// Associated hospital
+  o Double consultanceFee						// Consultance Fee of doctor
+  // o DiseaseCategory speciality				// Type of disease s(he) specializes in
 }
 // Chemist is considered as a participant for this business logic
 participant Chemist extends Citizen {
-  o Medicine [] listOfMedicine
-  o Double [] costPerMedMg
+  o Medicine [] listOfMedicine					// List of medicines kept in his store
+  o Double [] costPermg							// Cost per mg of each medicine 
 }
 // Pathology Laboratory Instructor is considered as a participant for this business logic
 participant PathLab extends Citizen {
-  o String labName
-  o Tests[] test
-  o Double [] cost
+  o String labName								// Name of Pathology
+  o Tests[] test								// Types of tests conducted at their lab
+  o Double [] cost								// Cost of each test
 }
 // Patient is considered as a participant for this business logic
 participant Patient extends Citizen {
-  o Double accountBal
-  o Double debt 
+  o Double debt 								// Debt to be paid by patient
 }
