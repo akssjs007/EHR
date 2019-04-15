@@ -16,15 +16,18 @@
  * Electronic Health cum Care record for patient pertaining to a city.
  */
 namespace org.ehr.basic
+
 concept InsuranceMap {
   o String personId
   o Double amountInsured
 }
 
+// Name of companies considered for providing insurance claims
 enum InsuranceProviders{
   o NICL
   o PVT
 }
+// Name of hospitals used for this project
 enum Hospitals {
   o AASTHA
   // o REGENCY
@@ -32,6 +35,7 @@ enum Hospitals {
   // o KABEER
   // o CONTACARE_EYE
 }
+// List of medicines in circulationn city-wide 
 enum Medicine {
   o ASETAMINOPHIN
   o ASPIRIN
@@ -40,18 +44,20 @@ enum Medicine {
   o FLUOXETINE
   o ALPRAZOLAM
 }
+// List of pathological tests considered for this project
 enum Tests {
   o LFT
   o URINALYSIS
   o INR
   o BLOODTEST
 }
-
+// Status of appointment
 enum AppointStatus{
   o CONFIRMED
   o REJECTED
   o PENDING
 }
+// Disease-infected part of human body
 enum DiseaseCategory{
   o EYE
   o HEART
@@ -60,6 +66,7 @@ enum DiseaseCategory{
   o GENITAL
   o MISC
 }
+
 // transaction Appointment {
 //   --> Prescription pPaper
 //   --> Patient visitor
@@ -83,6 +90,37 @@ enum DiseaseCategory{
 //   --> PathLab host
 // }
 
+// transaction requestAppoint {
+//   --> Patient patient
+//   --> Doctor doctor
+//   o Appointment appoint
+// }
+// Transaction to get appointment
+transaction confirmAppoint {
+   --> Patient patient
+  --> Doctor doctor
+  o Appointment appoint
+}
+// Transaction for recording interaction between doctor and patient during appointment
+transaction consult {
+   --> Patient patient
+  --> Doctor doctor
+  o Prescription presc
+}
+// Transaction to record purchase of medicines by patient from drugstore
+transaction buyMed {
+  --> Patient patient
+  --> Chemist chemist
+  o Prescription presc
+}
+// Transaction to record test conducted by pathology lab on patient
+transaction buyTest {
+  --> Patient patient
+  --> PathLab pathlab
+  o Prescription presc
+}
+
+// Medical instructions is considered as an asset of this business logic
 asset MedPresc identified by medPrescId {
   o String medPrescId
   o Medicine medicineType
@@ -90,16 +128,7 @@ asset MedPresc identified by medPrescId {
   o String instruction
   o Double perDay
 }
-asset Appointment identified by appointmentId{
-  o String appointmentId
-  o AppointStatus status
-  o Boolean isInsured
-  o String description
-  o DiseaseCategory group
-  o Doctor assigned optional
-  o Patient patient
-  o Insurance insuranceId optional
-}
+// Appointment is considered as an asset for this business logic
 asset Appointment identified by appointmentId{
   o String appointmentId
   o AppointStatus status
@@ -111,12 +140,14 @@ asset Appointment identified by appointmentId{
   o Insurance insuranceId optional
   o Double consultanceFee
 }
+// Insurance claim is considered as an asset for this business logic
 asset Insurance identified by InsuranceId {
   o String InsuranceId
   o InsuranceProviders provider
   o Patient patient
   o Double ensuredAmount
 }
+// Drugstore receipt is considered as an asset for this business logic
 asset Receipt identified by receiptID {
   o String receiptID
   o String providerID
@@ -124,6 +155,7 @@ asset Receipt identified by receiptID {
   o Double amountPaid
   o Boolean paidViaInsurance
 }
+// Medical Prescription is considered as an asset of this business logic
 asset Prescription identified by prescriptionId {
   o String prescriptionId
   o Boolean isMedPrescribed
@@ -145,12 +177,15 @@ asset Prescription identified by prescriptionId {
 //   o Boolean payment
 // }
 
+// An abstract citizen which shows that everyone of this project will have 
+// these factors alongwith add-ons
 abstract participant Citizen identified by id {
   o String id
   o String firstName
   o String lastName
   // o Address address optional
 }
+// Doctor is considered as a participant for this business logic
 participant Doctor extends Citizen {
   o String doctorId
   o Hospitals hospital
@@ -159,43 +194,19 @@ participant Doctor extends Citizen {
   // o Integer max_patient
   o DiseaseCategory speciality
 }
-
+// Chemist is considered as a participant for this business logic
 participant Chemist extends Citizen {
   o Medicine [] listOfMedicine
   o Double [] costPerMedMg
 }
+// Pathology Laboratory Instructor is considered as a participant for this business logic
 participant PathLab extends Citizen {
   o String labName
   o Tests[] test
   o Double [] cost
 }
-
+// Patient is considered as a participant for this business logic
 participant Patient extends Citizen {
   o Double accountBal
   o Double debt 
-}
-// transaction requestAppoint {
-//   --> Patient patient
-//   --> Doctor doctor
-//   o Appointment appoint
-// }
-transaction confirmAppoint {
-   --> Patient patient
-  --> Doctor doctor
-  o Appointment appoint
-}
-transaction consult {
-   --> Patient patient
-  --> Doctor doctor
-  o Prescription presc
-}
-transaction buyMed {
-  --> Patient patient
-  --> Chemist chemist
-  o Prescription presc
-}
-transaction buyTest {
-  --> Patient patient
-  --> PathLab pathlab
-  o Prescription presc
 }
