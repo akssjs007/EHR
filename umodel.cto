@@ -97,14 +97,15 @@ enum DiseaseCategory{
 // }
 // Transaction to get appointment
 transaction confirmAppoint {
-   --> Patient patient
+  --> Patient patient
   --> Doctor doctor
-  o Appointment appoint
+  --> Appointment appoint
 }
 // Transaction for recording interaction between doctor and patient during appointment
 transaction consult {
-   --> Patient patient
+  --> Patient patient
   --> Doctor doctor
+  --> Appointment appoint
   o Prescription presc
 }
 // Transaction to record purchase of medicines by patient from drugstore
