@@ -29,11 +29,11 @@ rule PthPrescR{
     resource: "org.ehr.basic.Prescription"
     action: ALLOW
 }
-rule PatPrescR{
-    description: "Patient allowed to read"
+rule PatR{
+    description: "Patient allowed to read all assets"
     participant: "org.ehr.basic.Patient"
     operation: READ
-    resource: "org.ehr.basic.Prescription"
+    resource: "org.ehr.basic.*"
     action: ALLOW
 }
 rule DocPrescC{
@@ -85,23 +85,9 @@ rule ChmMedprescR{
     resource: "org.ehr.basic.MedPresc"
     action: ALLOW
 }
-rule PatMedprescR{
-    description: "Only Patient is allowed to read"
-    participant: "org.ehr.basic.Patient"
-    operation: READ
-    resource: "org.ehr.basic.MedPresc"
-    action: ALLOW
-}
 rule DocAppointmentR{
     description: "Only Doctor is allowed to read"
     participant: "org.ehr.basic.Doctor"
-    operation: READ
-    resource: "org.ehr.basic.Appointment"
-    action: ALLOW
-}
-rule PatAppointmentR{
-    description: "Only Patient is allowed to read"
-    participant: "org.ehr.basic.Patient"
     operation: READ
     resource: "org.ehr.basic.Appointment"
     action: ALLOW
@@ -116,13 +102,6 @@ rule ChmRecieptR{
 rule PthRecieptR{
     description: "Only PathLab is allowed to read"
     participant: "org.ehr.basic.PathLab"
-    operation: READ
-    resource: "org.ehr.basic.Receipt"
-    action: ALLOW
-}
-rule PatRecieptR{
-    description: "Only Patient is allowed to read"
-    participant: "org.ehr.basic.Patient"
     operation: READ
     resource: "org.ehr.basic.Receipt"
     action: ALLOW
