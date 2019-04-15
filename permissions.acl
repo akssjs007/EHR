@@ -11,7 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+rule NetworkControlPermission {
+  description:  "NetworkControl can access network commands"
+  participant: "org.ehr.basic.NetworkControl"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.Network"
+  action: ALLOW
+}
 /**
  * Sample access control list.
  */
