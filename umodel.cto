@@ -147,7 +147,7 @@ abstract participant Citizen identified by id {
 participant Doctor extends Citizen {
   o Hospitals hospital							// Associated hospital
   o Double consultanceFee						// Consultance Fee of doctor
-  // o DiseaseCategory speciality				// Type of disease s(he) specializes in
+  o DiseaseCategory speciality				// Type of disease s(he) specializes in
 }
 // Chemist is considered as a participant for this business logic
 participant Chemist extends Citizen {
