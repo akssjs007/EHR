@@ -3,7 +3,7 @@
  * @param {org.ehr.basic.confirmAppoint} atx The sample transaction instance.
  * @transaction
  */
-async function confirmAppoint(atx) {
+/** async function confirmAppoint(atx) {
   // if ( atx.appoint.patient.id != atx.patient.id ){
   //   throw new Error("Visitor is not same as the patient in the appoint.!")
   // }
@@ -29,13 +29,14 @@ async function confirmAppoint(atx) {
     throw new Error(e)
   })
 }
+*/
 
 /**
  * Transaction for recording appointment between doctor and patient.
  * @param {org.ehr.basic.confirmAppoint} atx The sample transaction instance.
  * @transaction
  */
-async function confirmAppoint(atx) {
+/** async function confirmAppoint(atx) {
   // if ( atx.appoint.patient.id != atx.patient.id ){
   //   throw new Error("Visitor is not same as the patient in the appoint.!")
   // }
@@ -64,13 +65,14 @@ async function confirmAppoint(atx) {
     throw new Error(e)
   })
 }
+*/
 
 /**
  * Transaction for recording appointment between doctor and patient.
  * @param {org.ehr.basic.consult} atx The sample transaction instance.
  * @transaction
  */
-async function consult(atx){
+/** async function consult(atx){
   if(atx.presc.isMedPrescribed && atx.presc.isTestPrescribed ){
     throw new Error('Prescription can not be both test and medicine')
   }
@@ -114,13 +116,13 @@ async function consult(atx){
     throw new Error(error)
   })
 }
-
+*/
 /**
  * Transaction for recording appointment between doctor and patient.
  * @param {org.ehr.basic.confirmAppoint} atx The sample transaction instance.
  * @transaction
  */
-async function confirmAppoint(atx) {
+/** async function confirmAppoint(atx) {
   // if ( atx.appoint.patient.id != atx.patient.id ){
   //   throw new Error("Visitor is not same as the patient in the appoint.!")
   // }
@@ -149,6 +151,7 @@ async function confirmAppoint(atx) {
     throw new Error(e)
   })
 }
+*/
 
 /**
  * Transaction for recording appointment between doctor and patient.
