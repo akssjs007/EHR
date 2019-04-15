@@ -122,7 +122,7 @@
  * @param {org.ehr.basic.confirmAppoint} atx The sample transaction instance.
  * @transaction
  */
-/** async function confirmAppoint(atx) {
+ async function confirmAppoint(atx) {
   // if ( atx.appoint.patient.id != atx.patient.id ){
   //   throw new Error("Visitor is not same as the patient in the appoint.!")
   // }
@@ -151,7 +151,6 @@
     throw new Error(e)
   })
 }
-*/
 
 /**
  * Transaction for recording appointment between doctor and patient.
@@ -221,17 +220,17 @@ async function consult(atx){
      throw new Error('Prescription should prescibe test only')
    }
    if(atx.patient.id != atx.presc.patient.id){
-     throw new Error('Landi Tale')
+     throw new Error('This prescription is intended to someone else')
    }
    if(atx.patient.id != atx.presc.appoint.insuranceId.patient.id){
-     throw new Error('Landi Tale')
+     throw new Error('Insurance Id is not matching with the patient')
    }
 
    let cost = 0.0
    for(let i in atx.presc.test){
      let index =  atx.pathlab.test.indexOf(i)
      if(index < 0){
-       throw new Error('Ye bhi landi')
+       throw new Error('Not Allowed')
      }
      cost += cost[index]
    }
@@ -252,7 +251,7 @@ async function consult(atx){
           )
        }
      else {
-       throw new Error("Bhag teri maa ka insurance kara")
+       throw new Error("Insurance doesn't exist")
      }
    }
    else{
