@@ -1,0 +1,201 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Electronic Health cum Care record for patient pertaining to a city.
+ */
+namespace org.ehr.basic
+concept InsuranceMap {
+  o String personId
+  o Double amountInsured
+}
+
+enum InsuranceProviders{
+  o NICL
+  o PVT
+}
+enum Hospitals {
+  o AASTHA
+  // o REGENCY
+  // o NOVA
+  // o KABEER
+  // o CONTACARE_EYE
+}
+enum Medicine {
+  o ASETAMINOPHIN
+  o ASPIRIN
+  o PARACETAMOL
+  o AMLODIPINE
+  o FLUOXETINE
+  o ALPRAZOLAM
+}
+enum Tests {
+  o LFT
+  o URINALYSIS
+  o INR
+  o BLOODTEST
+}
+
+enum AppointStatus{
+  o CONFIRMED
+  o REJECTED
+  o PENDING
+}
+enum DiseaseCategory{
+  o EYE
+  o HEART
+  o EAR
+  o SKIN
+  o GENITAL
+  o MISC
+}
+// transaction Appointment {
+//   --> Prescription pPaper
+//   --> Patient visitor
+//   --> Doctor host
+// }
+// transaction Drugstore {
+//   --> Patient visitor
+//   --> Chemist retailer
+// }
+// transaction Inventory {
+//   --> Medicine medicine
+//   --> Chemist retailer
+// }
+// transaction Reimbursement {
+//   --> Claim cPaper
+//   --> InsuranceCompany host
+//   --> Patient visitor
+// }
+// transaction Test {
+//   --> Patient visitor
+//   --> PathLab host
+// }
+
+asset MedPresc identified by medPrescId {
+  o String medPrescId
+  o Medicine medicineType
+  o Double mgs
+  o String instruction
+  o Double perDay
+}
+asset Appointment identified by appointmentId{
+  o String appointmentId
+  o AppointStatus status
+  o Boolean isInsured
+  o String description
+  o DiseaseCategory group
+  o Doctor assigned optional
+  o Patient patient
+  o Insurance insuranceId optional
+}
+asset Appointment identified by appointmentId{
+  o String appointmentId
+  o AppointStatus status
+  o Boolean isInsured
+  o String description
+  o DiseaseCategory group
+  o Doctor assigned optional
+  o Patient patient
+  o Insurance insuranceId optional
+  o Double consultanceFee
+}
+asset Insurance identified by InsuranceId {
+  o String InsuranceId
+  o InsuranceProviders provider
+  o Patient patient
+  o Double ensuredAmount
+}
+asset Receipt identified by receiptID {
+  o String receiptID
+  o String providerID
+  o String providedTo
+  o Double amountPaid
+  o Boolean paidViaInsurance
+}
+asset Prescription identified by prescriptionId {
+  o String prescriptionId
+  o Boolean isMedPrescribed
+  o MedPresc[] prescribed optional
+  o Boolean isTestPrescribed
+  o Tests[] tests optional
+  o Appointment appoint
+  // o Boolean[] testDone optional
+  o String[] test_report optional
+  o Boolean[] medicinesBought
+  o Receipt[] receipt
+  --> Doctor doctor
+  --> Patient visitor
+}
+// asset Claim identified by claimId {
+//   o String claimId
+//   o Double cover
+//   --> InsuranceCompany manager
+//   o Boolean payment
+// }
+
+abstract participant Citizen identified by id {
+  o String id
+  o String firstName
+  o String lastName
+  // o Address address optional
+}
+participant Doctor extends Citizen {
+  o String doctorId
+  o Hospitals hospital
+  o Double consultanceFee
+  // o Integer n_patient
+  // o Integer max_patient
+  o DiseaseCategory speciality
+}
+
+participant Chemist extends Citizen {
+  o Medicine [] listOfMedicine
+  o Double [] costPerMedMg
+}
+participant PathLab extends Citizen {
+  o String labName
+  o Tests[] test
+  o Double [] cost
+}
+
+participant Patient extends Citizen {
+  o Double accountBal
+  o Double debt 
+}
+// transaction requestAppoint {
+//   --> Patient patient
+//   --> Doctor doctor
+//   o Appointment appoint
+// }
+transaction confirmAppoint {
+   --> Patient patient
+  --> Doctor doctor
+  o Appointment appoint
+}
+transaction consult {
+   --> Patient patient
+  --> Doctor doctor
+  o Prescription presc
+}
+transaction buyMed {
+  --> Patient patient
+  --> Chemist chemist
+  o Prescription presc
+}
+transaction buyTest {
+  --> Patient patient
+  --> PathLab pathlab
+  o Prescription presc
+}
