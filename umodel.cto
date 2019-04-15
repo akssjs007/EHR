@@ -65,15 +65,15 @@ enum DiseaseCategory{
 transaction confirmAppoint {
   --> Patient patient
   --> Doctor doctor
-  o Appointment appoint
+  --> Appointment appoint
 }
 // Transaction for recording interaction between doctor and patient during appointment
 transaction consult {
   --> Patient patient
   --> Doctor doctor
   --> Appointment appoint
-  o Prescription presc
-  o MedPresc medicine
+  --> Prescription presc
+  --> MedPresc medicine
 }
 // Transaction to record purchase of medicines by patient from drugstore
 transaction buyMed {
@@ -102,11 +102,11 @@ asset Appointment identified by appointmentId{
   o String status								// Status of appointment
   o Boolean isInsured							// Whether patient is insured
   o String description							// Description of appointment
-  o DiseaseCategory group						// Disease area reported by patient
+  o DiseaseCategory group optional				// Disease area reported by patient
   --> Doctor assigned optional					// Annoted doctor
-  --> Patient patient							// Patient details
+  --> Patient patient optional					// Patient details
   --> Insurance insuranceId optional			// Insurance company
-  o Double consultanceFee						// Consultance Fee
+  o Double consultanceFee optional				// Consultance Fee
 }
 // Insurance claim is considered as an asset for this business logic
 asset Insurance identified by InsuranceId {
@@ -128,12 +128,10 @@ asset Prescription identified by prescriptionId {
   o Boolean isMedPrescribed							// Whether medicine was prescribed to patient
   o MedPresc[] prescribed optional					// List of medicines prescribed
   o Boolean isTestPrescribed						// Whether medical tests were prescribed to patient
-  o Tests[] tests optional							// List of all tests conducted on patient
+  o Tests test optional								// Test conducted on patient
   --> Appointment appoint							// Appointment associated with this prescription 
   o String[] test_report optional					// List of tests reports given by pathology lab
-  o Receipt[] receipt								// List of all receipts during treatment phase
-  --> Doctor doctor									// Doctor who is giving prescription
-  --> Patient visitor								// Patient who is getting prescribed
+  o Receipt[] receipt optional						// List of all receipts during treatment phase
 }
 
 // An abstract citizen which shows that everyone of this project will have 
@@ -147,7 +145,7 @@ abstract participant Citizen identified by id {
 participant Doctor extends Citizen {
   o Hospitals hospital							// Associated hospital
   o Double consultanceFee						// Consultance Fee of doctor
-  o DiseaseCategory speciality				// Type of disease s(he) specializes in
+  o DiseaseCategory speciality					// Type of disease s(he) specializes in
 }
 // Chemist is considered as a participant for this business logic
 participant Chemist extends Citizen {
@@ -163,4 +161,5 @@ participant PathLab extends Citizen {
 // Patient is considered as a participant for this business logic
 participant Patient extends Citizen {
   o Double debt 								// Debt to be paid by patient
+  o DiseaseCategory disease						// Type of current ailment incurred by patient 
 }
