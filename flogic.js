@@ -29,9 +29,6 @@ async function gettingAppointment(catx) {
   if (catx.appoint.status === 'REJECTED'){
     throw new Error('Appointment already rejected');
   }
-  if (catx.visitor.id != catx.visitor.prescriptions.visitor.id){
-    throw new Error("Visitor is not same as the patient in the prescription");
-  }
   if (catx.doctor.speciality != catx.appoint.group){
     throw new Error('Doctor is not specialized into the required disease category');
   }
@@ -50,51 +47,20 @@ async function gettingAppointment(catx) {
  * @transaction
  */
 async function gettingChecked(ctx) {
-  if(!(ctx.presc.isMedPrescribed || ctx.presc.isTestPrescribed )){
-    throw new Error('Prescription should prescibe either test or medicine')
-  }
-  if (ctx.appoint.status === 'PENDING'){
-    throw new Error('Appointment yet to be confirmed!')
-  }
-  if (ctx.appoint.appointmentId != ctx.presc.appoint.appointmentId){
-    throw new Error('Prescription not matching with the appointment!')
-  }
-  if (ctx.appoint.status === 'CONSULTED'){
-    throw new Error('Appointment already consulted!')
-  }
-  if (ctx.appoint.status === 'REJECTED'){
-    throw new Error('Appointment already rejected!')
-  }
-  if(ctx.patient.id != ctx.appoint.patient.id){
-    throw new Error('Patient Proxy not allowed!')
-  }
-  if ( ctx.presc.appoint.doctor.id != ctx.doctor.id){
-    throw new Error('You are not the designated doctor')
-  }
-
+  
   ctx.appoint.status = 'CONSULTED';
   ctx.appoint.group = ctx.patient.disease;
   ctx.appoint.consultanceFee = ctx.doctor.consultanceFee;
   ctx.patient.debt = ctx.patient.debt + ctx.appoint.consultanceFee;
   if (ctx.appoint.isInsured || (ctx.appoint.insuranceId.ensuredAmount >= ctx.appoint.consultanceFee)){
-    ctx.appoint.insuranceId.ensuredAmount = ctx.appoint.insuranceId.ensuredAmount - ctx.appoint.consultanceFee;
+   	ctx.appoint.insuranceId.ensuredAmount = ctx.appoint.insuranceId.ensuredAmount - ctx.appoint.consultanceFee;
   } else {
-    let test = ctx.appoint.consultanceFee - ctx.appoint.insuranceId.ensuredAmount;
-    ctx.patient.debt = ctx.patient.debt + test;
-    ctx.appoint.insuranceId.ensuredAmount = 0
-    ctx.appoint.isInsured = FALSE;
+   	let test = ctx.appoint.consultanceFee - ctx.appoint.insuranceId.ensuredAmount;
+   	ctx.patient.debt = ctx.patient.debt + test;
+   	ctx.appoint.insuranceId.ensuredAmount = 0
+   	ctx.appoint.isInsured = FALSE;
   }
-  
-  const pre = ctx.presc;
-  
-  if (pre.prescribed) {
-      pre.prescribed.push(ctx.medicine);
-  } else {
-      pre.prescribed = [ctx.medicine];
-  }
-  
-  pre.test = 'BLOODTEST';
-  
+    
   
   const appointRegistry = await getAssetRegistry('org.example.mynetwork.Appointment');
   await appointRegistry.update(ctx.appoint);
@@ -102,4 +68,46 @@ async function gettingChecked(ctx) {
   await patientRegistry.update(ctx.patient);
   const prescriptionRegistry = await getAssetRegistry('org.example.mynetwork.Prescription');
   await prescriptionRegistry.update(pre);
+}
+
+/**
+ * Sample transaction processor function.
+ * @param {org.ehr.basic.buyMed} bmtx The sample transaction instance.
+ * @transaction
+ */
+async function gettingMedicine(bmtx) {
+  bmtx.patient.debt = bmtx.patient.debt + bmtx.chemist.costPermg;
+  
+  const receipt = getFactory().newResource('org.ehr.basic', 'Receipt', 'R_001');
+  receipt.providerID = bmtx.chemist.id;
+  receipt.providedTo = bmtx.patient.id;
+  receipt.amountPaid = bmtx.chemist.costPermg;
+  receipt.logTime = bmtx.timestamp;
+    
+  
+  const receiptRegistry = await getAssetRegistry('org.example.mynetwork.Receipt');
+  await receiptRegistry.addAll([receipt]);
+  const patientRegistry = await getParticipantRegistry('org.example.mynetwork.Patient');
+  await patientRegistry.update(bmtx.patient);
+}
+
+/**
+ * Sample transaction processor function.
+ * @param {org.ehr.basic.buyTest} bttx The sample transaction instance.
+ * @transaction
+ */
+async function gettingTest(bttx) {
+  bttx.patient.debt = bttx.patient.debt + bttx.pathlab.cost;
+  
+  const receipt = getFactory().newResource('org.ehr.basic', 'Receipt', 'R_002');
+  receipt.providerID = bttx.pathlab.id;
+  receipt.providedTo = bttx.patient.id;
+  receipt.amountPaid = bttx.pathlab.cost;
+  receipt.logTime = bttx.timestamp;
+    
+  
+  const receiptRegistry = await getAssetRegistry('org.example.mynetwork.Receipt');
+  await receiptRegistry.addAll([receipt]);
+  const patientRegistry = await getParticipantRegistry('org.example.mynetwork.Patient');
+  await patientRegistry.update(bmtx.patient);
 }
