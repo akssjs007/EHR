@@ -154,8 +154,8 @@ participant Chemist extends Citizen {
 // Pathology Laboratory Instructor is considered as a participant for this business logic
 participant PathLab extends Citizen {
   o String labName								// Name of Pathology
-  o Tests[] test								// Types of tests conducted at their lab
-  o Double [] cost								// Cost of each test
+  // o Tests[] test								// Types of tests conducted at their lab
+  o Double cost									// Cost of each test
 }
 // Patient is considered as a participant for this business logic
 participant Patient extends Citizen {
