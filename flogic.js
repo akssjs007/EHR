@@ -37,7 +37,7 @@ async function gettingAppointment(catx) {
   catx.appoint.patient = catx.patient;
   catx.appoint.assigned = catx.doctor;
   
-  const appointRegistry = await getAssetRegistry('org.example.mynetwork.Appointment');
+  const appointRegistry = await getAssetRegistry('org.ehr.basic.Appointment');
   await appointRegistry.update(catx.appoint);
 }
 
@@ -62,11 +62,11 @@ async function gettingChecked(ctx) {
   }
     
   
-  const appointRegistry = await getAssetRegistry('org.example.mynetwork.Appointment');
+  const appointRegistry = await getAssetRegistry('org.ehr.basic.Appointment');
   await appointRegistry.update(ctx.appoint);
-  const patientRegistry = await getParticipantRegistry('org.example.mynetwork.Patient');
+  const patientRegistry = await getParticipantRegistry('org.ehr.basic.Patient');
   await patientRegistry.update(ctx.patient);
-  const prescriptionRegistry = await getAssetRegistry('org.example.mynetwork.Prescription');
+  const prescriptionRegistry = await getAssetRegistry('org.ehr.basic.Prescription');
   await prescriptionRegistry.update(pre);
 }
 
@@ -85,9 +85,9 @@ async function gettingMedicine(bmtx) {
   receipt.logTime = bmtx.timestamp;
     
   
-  const receiptRegistry = await getAssetRegistry('org.example.mynetwork.Receipt');
+  const receiptRegistry = await getAssetRegistry('org.ehr.basic.Receipt');
   await receiptRegistry.addAll([receipt]);
-  const patientRegistry = await getParticipantRegistry('org.example.mynetwork.Patient');
+  const patientRegistry = await getParticipantRegistry('org.ehr.basic.Patient');
   await patientRegistry.update(bmtx.patient);
 }
 
@@ -106,8 +106,8 @@ async function gettingTest(bttx) {
   receipt.logTime = bttx.timestamp;
     
   
-  const receiptRegistry = await getAssetRegistry('org.example.mynetwork.Receipt');
+  const receiptRegistry = await getAssetRegistry('org.ehr.basic.Receipt');
   await receiptRegistry.addAll([receipt]);
-  const patientRegistry = await getParticipantRegistry('org.example.mynetwork.Patient');
+  const patientRegistry = await getParticipantRegistry('org.ehr.basic.Patient');
   await patientRegistry.update(bmtx.patient);
 }
